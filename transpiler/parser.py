@@ -1,4 +1,5 @@
 """Parser for constructing a Brainfuck AST"""
+import ast
 from dataclasses import dataclass, field
 from typing import List
 
@@ -10,6 +11,24 @@ class AbstractSyntaxTree:
     """Abstract syntax tree representing a Brainfuck program"""
 
     body: List[nodes.Node] = field(default_factory=list)
+
+    def translate(self) -> ast.Module:
+        """Translates the AST into a Python AST"""
+        memory = ast.Assign(
+            targets=[ast.Name(id="memory", ctx=ast.Store())],
+            value=ast.BinOp(
+                left=ast.List(elts=[ast.Constant(value=0)], ctx=ast.Load()),
+                op=ast.Mult(),
+                right=ast.Constant(value=30000),
+            ),
+        )
+        pointer = ast.Assign(
+            targets=[ast.Name(id="ip", ctx=ast.Store())], value=ast.Constant(value=0)
+        )
+        expressions = [node.translate() for node in self.body]
+        module = ast.Module(body=[memory, pointer] + expressions, type_ignores=[])
+        ast.fix_missing_locations(module)  # Generate line numbers for nodes
+        return module
 
 
 def parse(tokens: List[lexer.Token]) -> AbstractSyntaxTree:

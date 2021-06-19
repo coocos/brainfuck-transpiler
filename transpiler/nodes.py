@@ -1,5 +1,6 @@
 """Node definitions for an abstract syntax tree"""
-from abc import ABC
+import ast
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import List
 
@@ -7,49 +8,135 @@ from typing import List
 class Node(ABC):
     """Node in abstract syntax tree"""
 
+    @abstractmethod
+    def translate(self):
+        """Translates the Brainfuck node into a Python node"""
+
 
 @dataclass
 class IncrementPointer(Node):
     """Increments pointer"""
 
-    pass
+    def translate(self) -> ast.AugAssign:
+        """Translates > to ip += 1"""
+        return ast.AugAssign(
+            target=ast.Name(id="ip", ctx=ast.Store()),
+            op=ast.Add(),
+            value=ast.Constant(value=1),
+        )
 
 
 @dataclass
 class DecrementPointer(Node):
     """Decrements pointer"""
 
-    pass
+    def translate(self) -> ast.AugAssign:
+        """Translates < to ip -= 1"""
+        return ast.AugAssign(
+            target=ast.Name(id="ip", ctx=ast.Store()),
+            op=ast.Sub(),
+            value=ast.Constant(value=1),
+        )
 
 
 @dataclass
 class IncrementValue(Node):
     """Increments value at pointer"""
 
-    pass
+    def translate(self) -> ast.AugAssign:
+        """Translates + to memory[ip] += 1"""
+        return ast.AugAssign(
+            target=ast.Subscript(
+                value=ast.Name(id="memory", ctx=ast.Load()),
+                slice=ast.Name(id="ip", ctx=ast.Load()),
+                ctx=ast.Store(),
+            ),
+            op=ast.Add(),
+            value=ast.Constant(1),
+        )
 
 
 @dataclass
 class DecrementValue(Node):
     """Decrements value at pointer"""
 
-    pass
+    def translate(self) -> ast.AugAssign:
+        """Translates - to memory[ip] -= 1"""
+        return ast.AugAssign(
+            target=ast.Subscript(
+                value=ast.Name(id="memory", ctx=ast.Load()),
+                slice=ast.Name(id="ip", ctx=ast.Load()),
+                ctx=ast.Store(),
+            ),
+            op=ast.Sub(),
+            value=ast.Constant(1),
+        )
 
 
 @dataclass
 class OutputValue(Node):
-    """Outputs byte at pointer location"""
+    """Outputs value at pointer location"""
 
-    pass
+    def translate(self):
+        """Translates . to print(memory[ip])"""
+        return ast.Expr(
+            ast.Call(
+                func=ast.Name(
+                    id="print",
+                    ctx=ast.Load(),
+                ),
+                args=[
+                    ast.Subscript(
+                        value=ast.Name(id="memory", ctx=ast.Load()),
+                        slice=ast.Name(id="ip", ctx=ast.Load()),
+                        ctx=ast.Store(),
+                    )
+                ],
+                keywords=[],
+            )
+        )
 
 
 @dataclass
 class ReadValue(Node):
-    """Reads one byte of input and stores it at pointer location"""
+    """Reads input value and stores it at pointer location"""
 
-    pass
+    def translate(self):
+        """Translates , to memory[ip] = input()[0]"""
+        return ast.Assign(
+            targets=[
+                ast.Subscript(
+                    value=ast.Name(id="memory", ctx=ast.Load()),
+                    slice=ast.Name(id="ip", ctx=ast.Load()),
+                    ctx=ast.Store(),
+                )
+            ],
+            value=ast.Subscript(
+                value=ast.Call(
+                    func=ast.Name(id="input", ctx=ast.Load()), args=[], keywords=[]
+                ),
+                slice=ast.Constant(value=0),
+                ctx=ast.Load(),
+            ),
+        )
 
 
 @dataclass
 class Loop(Node):
     body: List[Node] = field(default_factory=list)
+
+    def translate(self):
+        """Translates [] to while memory[ip] != 0:"""
+        return ast.While(
+            test=ast.Compare(
+                left=ast.Subscript(
+                    value=ast.Name(id="memory", ctx=ast.Load()),
+                    slice=ast.Name(id="ip", ctx=ast.Load()),
+                    ctx=ast.Load(),
+                ),
+                ops=[ast.NotEq()],
+                comparators=[ast.Constant(value=0)],
+            ),
+            body=[node.translate() for node in self.body],
+            orelse=[],
+        )
