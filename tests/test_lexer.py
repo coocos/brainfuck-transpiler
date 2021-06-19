@@ -13,10 +13,11 @@ def test_tokenizing_multiline_code_with_comments():
     tokens = lexer.tokenize(
         textwrap.dedent(
             """
-        ++++    Increment cell to 4
-        [       Start loop
-            -   Decrement value
-        ]"""
+            ++++    Increment cell to 4
+            [       Start loop
+                -   Decrement value
+            ]
+            """
         )
     )
     assert tokens == ["+", "+", "+", "+", "[", "-", "]"]
