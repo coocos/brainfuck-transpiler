@@ -6,9 +6,7 @@ from transpiler import lexer
 
 def test_tokenizing_all_possible_tokens():
     tokens = lexer.tokenize("<>+-.,[]")
-    assert tokens == [
-        lexer.Token(token) for token in ["<", ">", "+", "-", ".", ",", "[", "]"]
-    ]
+    assert tokens == [lexer.Token(token) for token in "<>+-.,[]"]
 
 
 def test_tokenizing_multiline_code_with_comments():
@@ -22,6 +20,4 @@ def test_tokenizing_multiline_code_with_comments():
             """
         )
     )
-    assert tokens == [
-        lexer.Token(token) for token in ["+", "+", "+", "+", "[", "-", "]"]
-    ]
+    assert tokens == [lexer.Token(token) for token in "++++[-]"]
