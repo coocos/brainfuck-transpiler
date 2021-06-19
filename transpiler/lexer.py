@@ -1,35 +1,27 @@
-"""Lexer for tokenizing brainfuck code"""
+"""Lexer for tokenizing Brainfuck code"""
+from enum import Enum
 from typing import List
 
 
-def tokenize(code: str) -> List[str]:
+class Token(str, Enum):
+    """A single code token"""
+
+    DECREMENT = "<"
+    INCREMENT = ">"
+    ADD = "+"
+    SUBTRACT = "-"
+    OUTPUT = "."
+    INPUT = ","
+    LOOP_START = "["
+    LOOP_END = "]"
+
+
+def tokenize(code: str) -> List[Token]:
     """Tokenizes given string of code"""
     tokens = []
     for char in code:
-        # Decrement pointer
-        if char == "<":
-            tokens.append(char)
-        # Increment pointer
-        elif char == ">":
-            tokens.append(char)
-        # Increment value at pointer
-        elif char == "+":
-            tokens.append(char)
-        # Decrement value at pointer
-        elif char == "-":
-            tokens.append(char)
-        # Output byte at pointer
-        elif char == ".":
-            tokens.append(char)
-        # Read byte and store it at pointer location
-        elif char == ",":
-            tokens.append(char)
-        # Start loop
-        elif char == "[":
-            tokens.append(char)
-        # End loop
-        elif char == "]":
-            tokens.append(char)
-        else:
-            continue
+        try:
+            tokens.append(Token(char))
+        except ValueError:
+            pass
     return tokens

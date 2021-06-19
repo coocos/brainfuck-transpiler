@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from . import nodes
+from transpiler import lexer, nodes
 
 
 @dataclass
@@ -12,31 +12,34 @@ class AbstractSyntaxTree:
     body: List[nodes.Node] = field(default_factory=list)
 
 
-def parse(tokens: List[str]) -> AbstractSyntaxTree:
+def parse(tokens: List[lexer.Token]) -> AbstractSyntaxTree:
     """Parses tokens and constructs an abstract syntax tree"""
 
     tree = AbstractSyntaxTree()
     stack = [tree.body]
 
     for token in tokens:
+
         body = stack[-1]
-        if token == "<":
+        if token is lexer.Token.DECREMENT:
             body.append(nodes.DecrementPointer())
-        elif token == ">":
+        elif token is lexer.Token.INCREMENT:
             body.append(nodes.IncrementPointer())
-        if token == "+":
+        elif token is lexer.Token.ADD:
             body.append(nodes.IncrementValue())
-        elif token == "-":
+        elif token is lexer.Token.SUBTRACT:
             body.append(nodes.DecrementValue())
-        if token == ".":
+        elif token is lexer.Token.OUTPUT:
             body.append(nodes.OutputValue())
-        elif token == ",":
+        elif token is lexer.Token.INPUT:
             body.append(nodes.ReadValue())
-        elif token == "[":
+        elif token is lexer.Token.LOOP_START:
             loop = nodes.Loop()
             body.append(loop)
             stack.append(loop.body)
-        elif token == "]":
+        elif token is lexer.Token.LOOP_END:
             stack.pop()
+        else:
+            raise TypeError(f"Unknown token type: {token}")
 
     return tree

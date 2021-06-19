@@ -1,10 +1,12 @@
-from transpiler import parser
-from transpiler import nodes
+from transpiler import lexer, parser, nodes
 
 
 def test_parsing_tokens():
 
-    tokens = ["+", ">", "<", ",", ".", "[", "-", "-", "[", "-", "]", "]"]
+    tokens = [
+        lexer.Token(token)
+        for token in ["+", ">", "<", ",", ".", "[", "-", "-", "[", "-", "]", "]"]
+    ]
     tree = parser.parse(tokens)
 
     assert tree.body == [
