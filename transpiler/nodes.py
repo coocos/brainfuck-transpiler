@@ -1,15 +1,15 @@
-"""Node definitions for an abstract syntax tree"""
+"""Abstract syntax tree node definitions"""
 import ast
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Any
 
 
 class Node(ABC):
-    """Node in abstract syntax tree"""
+    """Base class for all tree nodes"""
 
     @abstractmethod
-    def translate(self):
+    def translate(self) -> Any:
         """Translates the Brainfuck node into a Python node"""
 
 
@@ -77,7 +77,7 @@ class DecrementValue(Node):
 class OutputValue(Node):
     """Outputs value at pointer location"""
 
-    def translate(self):
+    def translate(self) -> ast.Expr:
         """Translates . to print(memory[ip])"""
         return ast.Expr(
             ast.Call(
@@ -101,7 +101,7 @@ class OutputValue(Node):
 class ReadValue(Node):
     """Reads input value and stores it at pointer location"""
 
-    def translate(self):
+    def translate(self) -> ast.Assign:
         """Translates , to memory[ip] = input()[0]"""
         return ast.Assign(
             targets=[
@@ -123,9 +123,11 @@ class ReadValue(Node):
 
 @dataclass
 class Loop(Node):
+    """Loops until value at pointer is zero"""
+
     body: List[Node] = field(default_factory=list)
 
-    def translate(self):
+    def translate(self) -> ast.While:
         """Translates [] to while memory[ip] != 0:"""
         return ast.While(
             test=ast.Compare(

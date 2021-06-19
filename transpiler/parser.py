@@ -12,8 +12,10 @@ class AbstractSyntaxTree:
 
     body: List[nodes.Node] = field(default_factory=list)
 
-    def translate(self) -> ast.Module:
-        """Translates the AST into a Python AST"""
+    def environment_nodes(self) -> List[ast.Assign]:
+        """
+        Returns Python AST nodes which initialize the memory cells and the pointer
+        """
         memory = ast.Assign(
             targets=[ast.Name(id="memory", ctx=ast.Store())],
             value=ast.BinOp(
@@ -25,8 +27,14 @@ class AbstractSyntaxTree:
         pointer = ast.Assign(
             targets=[ast.Name(id="ip", ctx=ast.Store())], value=ast.Constant(value=0)
         )
+        return [memory, pointer]
+
+    def translate(self) -> ast.Module:
+        """Translates the AST into a Python AST"""
         expressions = [node.translate() for node in self.body]
-        module = ast.Module(body=[memory, pointer] + expressions, type_ignores=[])
+        module = ast.Module(
+            body=self.environment_nodes() + expressions, type_ignores=[]
+        )
         ast.fix_missing_locations(module)  # Generate line numbers for nodes
         return module
 
