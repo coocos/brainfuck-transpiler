@@ -38,8 +38,8 @@ def test_tree_translation():
         memory[ip] += 1
         ip += 1
         ip -= 1
-        memory[ip] = input()[0]
-        print(memory[ip])
+        memory[ip] = ord(input()[0])
+        print(chr(memory[ip]))
         while memory[ip] != 0:
             memory[ip] -= 1
             memory[ip] -= 1

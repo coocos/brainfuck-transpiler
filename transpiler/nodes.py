@@ -78,7 +78,7 @@ class OutputValue(Node):
     """Outputs value at pointer location"""
 
     def translate(self) -> ast.Expr:
-        """Translates . to print(memory[ip])"""
+        """Translates . to print(chr(memory[ip]))"""
         return ast.Expr(
             ast.Call(
                 func=ast.Name(
@@ -86,10 +86,16 @@ class OutputValue(Node):
                     ctx=ast.Load(),
                 ),
                 args=[
-                    ast.Subscript(
-                        value=ast.Name(id="memory", ctx=ast.Load()),
-                        slice=ast.Name(id="ip", ctx=ast.Load()),
-                        ctx=ast.Store(),
+                    ast.Call(
+                        func=ast.Name(id="chr", ctx=ast.Load()),
+                        args=[
+                            ast.Subscript(
+                                value=ast.Name(id="memory", ctx=ast.Load()),
+                                slice=ast.Name(id="ip", ctx=ast.Load()),
+                                ctx=ast.Store(),
+                            )
+                        ],
+                        keywords=[],
                     )
                 ],
                 keywords=[],
@@ -102,7 +108,7 @@ class ReadValue(Node):
     """Reads input value and stores it at pointer location"""
 
     def translate(self) -> ast.Assign:
-        """Translates , to memory[ip] = input()[0]"""
+        """Translates , to memory[ip] = ord(input()[0])"""
         return ast.Assign(
             targets=[
                 ast.Subscript(
@@ -111,12 +117,20 @@ class ReadValue(Node):
                     ctx=ast.Store(),
                 )
             ],
-            value=ast.Subscript(
-                value=ast.Call(
-                    func=ast.Name(id="input", ctx=ast.Load()), args=[], keywords=[]
-                ),
-                slice=ast.Constant(value=0),
-                ctx=ast.Load(),
+            value=ast.Call(
+                func=ast.Name(id="ord", ctx=ast.Load()),
+                args=[
+                    ast.Subscript(
+                        value=ast.Call(
+                            func=ast.Name(id="input", ctx=ast.Load()),
+                            args=[],
+                            keywords=[],
+                        ),
+                        slice=ast.Constant(value=0),
+                        ctx=ast.Load(),
+                    )
+                ],
+                keywords=[],
             ),
         )
 
