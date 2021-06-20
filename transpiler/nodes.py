@@ -10,7 +10,7 @@ class Node(ABC):
 
     @abstractmethod
     def translate(self) -> Any:
-        """Translates the Brainfuck node into a Python node"""
+        """Translates the Brainfuck node to a Python node"""
 
 
 @dataclass
@@ -170,7 +170,7 @@ def simplify(nodes: List[Node]) -> List[Node]:
     """
     Simplifies a sequence of nodes by merging identical back-to-back statements.
 
-    For example, a Brainfuck sequence like -- could be transpiled into multiple repeated
+    For example, a Brainfuck sequence like -- could be transpiled to multiple repeated
     Python assignments like:
 
         pointer -= 1

@@ -30,7 +30,7 @@ class AbstractSyntaxTree:
         return [memory, pointer]
 
     def translate(self) -> ast.Module:
-        """Translates the AST into a Python AST"""
+        """Translates the AST to a Python AST"""
         expressions = [node.translate() for node in nodes.simplify(self.body)]
         module = ast.Module(
             body=self.environment_nodes() + expressions, type_ignores=[]
