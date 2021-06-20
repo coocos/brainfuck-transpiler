@@ -25,7 +25,8 @@ class AbstractSyntaxTree:
             ),
         )
         pointer = ast.Assign(
-            targets=[ast.Name(id="ip", ctx=ast.Store())], value=ast.Constant(value=0)
+            targets=[ast.Name(id="pointer", ctx=ast.Store())],
+            value=ast.Constant(value=0),
         )
         return [memory, pointer]
 

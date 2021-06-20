@@ -20,9 +20,9 @@ class IncrementPointer(Node):
     value = 1
 
     def translate(self) -> ast.AugAssign:
-        """Translates > to ip += 1"""
+        """Translates > to pointer += 1"""
         return ast.AugAssign(
-            target=ast.Name(id="ip", ctx=ast.Store()),
+            target=ast.Name(id="pointer", ctx=ast.Store()),
             op=ast.Add(),
             value=ast.Constant(value=self.value),
         )
@@ -35,9 +35,9 @@ class DecrementPointer(Node):
     value = 1
 
     def translate(self) -> ast.AugAssign:
-        """Translates < to ip -= 1"""
+        """Translates < to pointer -= 1"""
         return ast.AugAssign(
-            target=ast.Name(id="ip", ctx=ast.Store()),
+            target=ast.Name(id="pointer", ctx=ast.Store()),
             op=ast.Sub(),
             value=ast.Constant(value=self.value),
         )
@@ -50,11 +50,11 @@ class IncrementValue(Node):
     value = 1
 
     def translate(self) -> ast.AugAssign:
-        """Translates + to memory[ip] += 1"""
+        """Translates + to memory[pointer] += 1"""
         return ast.AugAssign(
             target=ast.Subscript(
                 value=ast.Name(id="memory", ctx=ast.Load()),
-                slice=ast.Name(id="ip", ctx=ast.Load()),
+                slice=ast.Name(id="pointer", ctx=ast.Load()),
                 ctx=ast.Store(),
             ),
             op=ast.Add(),
@@ -69,11 +69,11 @@ class DecrementValue(Node):
     value = 1
 
     def translate(self) -> ast.AugAssign:
-        """Translates - to memory[ip] -= 1"""
+        """Translates - to memory[pointer] -= 1"""
         return ast.AugAssign(
             target=ast.Subscript(
                 value=ast.Name(id="memory", ctx=ast.Load()),
-                slice=ast.Name(id="ip", ctx=ast.Load()),
+                slice=ast.Name(id="pointer", ctx=ast.Load()),
                 ctx=ast.Store(),
             ),
             op=ast.Sub(),
@@ -86,7 +86,7 @@ class OutputValue(Node):
     """Outputs value at pointer location"""
 
     def translate(self) -> ast.Expr:
-        """Translates . to print(chr(memory[ip]))"""
+        """Translates . to print(chr(memory[pointer]))"""
         return ast.Expr(
             ast.Call(
                 func=ast.Name(
@@ -99,7 +99,7 @@ class OutputValue(Node):
                         args=[
                             ast.Subscript(
                                 value=ast.Name(id="memory", ctx=ast.Load()),
-                                slice=ast.Name(id="ip", ctx=ast.Load()),
+                                slice=ast.Name(id="pointer", ctx=ast.Load()),
                                 ctx=ast.Store(),
                             )
                         ],
@@ -116,12 +116,12 @@ class ReadValue(Node):
     """Reads input value and stores it at pointer location"""
 
     def translate(self) -> ast.Assign:
-        """Translates , to memory[ip] = ord(input()[0])"""
+        """Translates , to memory[pointer] = ord(input()[0])"""
         return ast.Assign(
             targets=[
                 ast.Subscript(
                     value=ast.Name(id="memory", ctx=ast.Load()),
-                    slice=ast.Name(id="ip", ctx=ast.Load()),
+                    slice=ast.Name(id="pointer", ctx=ast.Load()),
                     ctx=ast.Store(),
                 )
             ],
@@ -150,12 +150,12 @@ class Loop(Node):
     body: List[Node] = field(default_factory=list)
 
     def translate(self) -> ast.While:
-        """Translates [] to while memory[ip] != 0:"""
+        """Translates [] to while memory[pointer] != 0:"""
         return ast.While(
             test=ast.Compare(
                 left=ast.Subscript(
                     value=ast.Name(id="memory", ctx=ast.Load()),
-                    slice=ast.Name(id="ip", ctx=ast.Load()),
+                    slice=ast.Name(id="pointer", ctx=ast.Load()),
                     ctx=ast.Load(),
                 ),
                 ops=[ast.NotEq()],

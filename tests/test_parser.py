@@ -34,16 +34,16 @@ def test_tree_translation():
     expected = textwrap.dedent(
         """
         memory = [0] * 30000
-        ip = 0
-        memory[ip] += 1
-        ip += 1
-        ip -= 1
-        memory[ip] = ord(input()[0])
-        print(chr(memory[ip]), end='')
-        while memory[ip] != 0:
-            memory[ip] -= 2
-            while memory[ip] != 0:
-                memory[ip] -= 1
+        pointer = 0
+        memory[pointer] += 1
+        pointer += 1
+        pointer -= 1
+        memory[pointer] = ord(input()[0])
+        print(chr(memory[pointer]), end='')
+        while memory[pointer] != 0:
+            memory[pointer] -= 2
+            while memory[pointer] != 0:
+                memory[pointer] -= 1
         """
     )
 
