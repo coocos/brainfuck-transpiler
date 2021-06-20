@@ -1,18 +1,20 @@
 # brainfuck-transpiler
 
-Transpiler for compiling [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) into Python.
+Transpiler for compiling [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) to Python.
+
+[![test](https://github.com/coocos/brainfuck-transpiler/actions/workflows/test.yml/badge.svg)](https://github.com/coocos/brainfuck-transpiler/actions/workflows/test.yml)
 
 ## How it works
 
 1. Brainfuck code is tokenized using a lexer
 2. A parser constructs an [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) from the tokens
-3. The constructed Brainfuck syntax tree is translated into a Python syntax tree using the [Python ast module](https://docs.python.org/3/library/ast.html).
+3. The constructed Brainfuck syntax tree is translated to a Python syntax tree using the [Python ast module](https://docs.python.org/3/library/ast.html).
 
 ## Examples
 
 ### Transpiling Brainfuck to Python
 
-The following examples reads a Brainfuck program from stdin, transpiles it to Python and prints the resulting program to stdout:
+The following example reads a Brainfuck program from stdin, transpiles it to Python and prints the resulting program to stdout:
 
 ```shell
 echo '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.' | poetry run transpiler/transpile.py
