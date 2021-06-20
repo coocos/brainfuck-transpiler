@@ -17,12 +17,14 @@ class Node(ABC):
 class IncrementPointer(Node):
     """Increments pointer"""
 
+    value = 1
+
     def translate(self) -> ast.AugAssign:
         """Translates > to ip += 1"""
         return ast.AugAssign(
             target=ast.Name(id="ip", ctx=ast.Store()),
             op=ast.Add(),
-            value=ast.Constant(value=1),
+            value=ast.Constant(value=self.value),
         )
 
 
@@ -30,18 +32,22 @@ class IncrementPointer(Node):
 class DecrementPointer(Node):
     """Decrements pointer"""
 
+    value = 1
+
     def translate(self) -> ast.AugAssign:
         """Translates < to ip -= 1"""
         return ast.AugAssign(
             target=ast.Name(id="ip", ctx=ast.Store()),
             op=ast.Sub(),
-            value=ast.Constant(value=1),
+            value=ast.Constant(value=self.value),
         )
 
 
 @dataclass
 class IncrementValue(Node):
     """Increments value at pointer"""
+
+    value = 1
 
     def translate(self) -> ast.AugAssign:
         """Translates + to memory[ip] += 1"""
@@ -52,13 +58,15 @@ class IncrementValue(Node):
                 ctx=ast.Store(),
             ),
             op=ast.Add(),
-            value=ast.Constant(1),
+            value=ast.Constant(self.value),
         )
 
 
 @dataclass
 class DecrementValue(Node):
     """Decrements value at pointer"""
+
+    value = 1
 
     def translate(self) -> ast.AugAssign:
         """Translates - to memory[ip] -= 1"""
@@ -69,7 +77,7 @@ class DecrementValue(Node):
                 ctx=ast.Store(),
             ),
             op=ast.Sub(),
-            value=ast.Constant(1),
+            value=ast.Constant(self.value),
         )
 
 
@@ -153,6 +161,34 @@ class Loop(Node):
                 ops=[ast.NotEq()],
                 comparators=[ast.Constant(value=0)],
             ),
-            body=[node.translate() for node in self.body],
+            body=[node.translate() for node in simplify(self.body)],
             orelse=[],
         )
+
+
+def simplify(nodes: List[Node]) -> List[Node]:
+    """
+    Simplifies a sequence of nodes by merging identical back-to-back statements.
+
+    For example, a Brainfuck sequence like -- could be transpiled into multiple repeated
+    Python assignments like:
+
+        pointer -= 1
+        pointer -= 1
+
+    However, by merging the nodes the sequence can be transpiled more fluently:
+
+        pointer -= 2
+    """
+    simplifiable_nodes = (
+        IncrementPointer,
+        DecrementPointer,
+        IncrementValue,
+        DecrementValue,
+    )
+    stack = [nodes[0]]
+    for node in nodes[1:]:
+        if isinstance(node, simplifiable_nodes) and isinstance(node, type(stack[-1])):
+            node.value = stack.pop().value + 1
+        stack.append(node)
+    return stack
