@@ -8,15 +8,15 @@ Transpiler for compiling [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) in
 2. A parser constructs an [abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) from the tokens
 3. The constructed Brainfuck syntax tree is translated into a Python syntax tree using the [Python ast module](https://docs.python.org/3/library/ast.html).
 
-## Example
+## Examples
 
-Given a simple Brainfuck program like this which prints "Hello world!":
+### Transpiling Brainfuck to Python
 
-```brainfuck
-++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.
+The following examples reads a Brainfuck program from stdin, transpiles it to Python and prints the resulting program to stdout:
+
+```shell
+echo '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.' | poetry run transpiler/transpile.py
 ```
-
-The transpiler will produce a Python program like this:
 
 ```python
 memory = [0] * 30000
@@ -77,4 +77,25 @@ print(chr(memory[ip]))
 ip += 1
 memory[ip] += 2
 print(chr(memory[ip]))
+```
+
+### Executing the transpiled program
+
+Since the transpiled program is written to stdout, you can execute it directly by piping the result to the Python interpreter:
+
+```shell
+echo '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.' | poetry run transpiler/transpile.py | python3
+
+H
+e
+l
+l
+o
+
+W
+o
+r
+l
+d
+!
 ```
