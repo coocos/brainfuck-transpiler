@@ -51,34 +51,35 @@ while memory[ip] != 0:
     ip -= 1
     memory[ip] -= 1
 ip += 2
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 ip += 1
 memory[ip] -= 3
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 memory[ip] += 7
-print(chr(memory[ip]))
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
+print(chr(memory[ip]), end='')
 memory[ip] += 3
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 ip += 2
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 ip -= 1
 memory[ip] -= 1
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 ip -= 1
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 memory[ip] += 3
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 memory[ip] -= 6
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 memory[ip] -= 8
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 ip += 2
 memory[ip] += 1
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
 ip += 1
 memory[ip] += 2
-print(chr(memory[ip]))
+print(chr(memory[ip]), end='')
+
 ```
 
 ### Executing the transpiled program
@@ -88,16 +89,5 @@ Since the transpiled program is written to stdout, you can execute it directly b
 ```shell
 echo '++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.' | poetry run transpiler/transpile.py | python3
 
-H
-e
-l
-l
-o
-
-W
-o
-r
-l
-d
-!
+Hello World!
 ```

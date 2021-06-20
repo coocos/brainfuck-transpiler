@@ -106,7 +106,7 @@ class OutputValue(Node):
                         keywords=[],
                     )
                 ],
-                keywords=[],
+                keywords=[ast.keyword(arg="end", value=ast.Constant(value=""))],
             )
         )
 
