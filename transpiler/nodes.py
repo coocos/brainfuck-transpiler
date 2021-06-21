@@ -17,7 +17,7 @@ class Node(ABC):
 class IncrementPointer(Node):
     """Increments pointer"""
 
-    value = 1
+    value: int = 1
 
     def translate(self) -> ast.AugAssign:
         """Translates > to pointer += 1"""
@@ -32,7 +32,7 @@ class IncrementPointer(Node):
 class DecrementPointer(Node):
     """Decrements pointer"""
 
-    value = 1
+    value: int = 1
 
     def translate(self) -> ast.AugAssign:
         """Translates < to pointer -= 1"""
@@ -47,7 +47,7 @@ class DecrementPointer(Node):
 class IncrementValue(Node):
     """Increments value at pointer"""
 
-    value = 1
+    value: int = 1
 
     def translate(self) -> ast.AugAssign:
         """Translates + to memory[pointer] += 1"""
@@ -66,7 +66,7 @@ class IncrementValue(Node):
 class DecrementValue(Node):
     """Decrements value at pointer"""
 
-    value = 1
+    value: int = 1
 
     def translate(self) -> ast.AugAssign:
         """Translates - to memory[pointer] -= 1"""
