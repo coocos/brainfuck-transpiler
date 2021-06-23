@@ -2,7 +2,7 @@
 import ast
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import List, Any
+from typing import Any
 
 
 class Node(ABC):
@@ -147,7 +147,7 @@ class ReadValue(Node):
 class Loop(Node):
     """Loops until value at pointer is zero"""
 
-    body: List[Node] = field(default_factory=list)
+    body: list[Node] = field(default_factory=list)
 
     def translate(self) -> ast.While:
         """Translates [] to while memory[pointer] != 0:"""
@@ -166,7 +166,7 @@ class Loop(Node):
         )
 
 
-def simplify(nodes: List[Node]) -> List[Node]:
+def simplify(nodes: list[Node]) -> list[Node]:
     """
     Simplifies a sequence of nodes by merging identical back-to-back statements.
 

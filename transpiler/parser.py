@@ -1,7 +1,6 @@
 """Parser for constructing a Brainfuck AST"""
 import ast
 from dataclasses import dataclass, field
-from typing import List
 
 from transpiler import lexer, nodes
 
@@ -10,9 +9,9 @@ from transpiler import lexer, nodes
 class AbstractSyntaxTree:
     """Abstract syntax tree representing a Brainfuck program"""
 
-    body: List[nodes.Node] = field(default_factory=list)
+    body: list[nodes.Node] = field(default_factory=list)
 
-    def environment_nodes(self) -> List[ast.Assign]:
+    def environment_nodes(self) -> list[ast.Assign]:
         """
         Returns Python AST nodes which initialize the memory cells and the pointer
         """
@@ -40,7 +39,7 @@ class AbstractSyntaxTree:
         return module
 
 
-def parse(tokens: List[lexer.Token]) -> AbstractSyntaxTree:
+def parse(tokens: list[lexer.Token]) -> AbstractSyntaxTree:
     """Parses tokens and constructs an abstract syntax tree"""
 
     tree = AbstractSyntaxTree()

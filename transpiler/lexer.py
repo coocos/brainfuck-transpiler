@@ -1,6 +1,5 @@
 """Lexer for tokenizing Brainfuck code"""
 from enum import Enum
-from typing import List
 
 
 class Token(str, Enum):
@@ -16,7 +15,7 @@ class Token(str, Enum):
     LOOP_END = "]"
 
 
-def tokenize(code: str) -> List[Token]:
+def tokenize(code: str) -> list[Token]:
     """Tokenizes given string of code"""
     tokens = []
     for char in code:
